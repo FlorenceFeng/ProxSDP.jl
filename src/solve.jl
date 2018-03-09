@@ -190,43 +190,18 @@ function MOI.optimize!(instance::ProxSDPSolverInstance)
     c0 = full(sparsevec(_varmap(instance.varmap, f), f.coefficients, n))
 
     c = MOI.get(instance.data, MOI.ObjectiveSense()) == MOI.MaxSense ? -c0 : c0
-    # @show instance.varmap
-    # # @show cone
-    # # @show preA
-    # @show preb
-    # @show c
-    # # @show m
-    # # @show n
-    # @show full(preA)
-    # # @show cone.f
-    # @show full(preA[:, 1:cone.f])
-    # @show cone.sa
-    # BLAS.set_num_threads(2)
+
     TimerOutputs.reset_timer!()
     A = preA[1:cone.f,:]
     G = preA[cone.f+1:cone.f+cone.l,:]
     b = preb[1:cone.f]
     h = preb[cone.f+1:cone.f+cone.l]
-    # aff = AffineSets(A, G, b, h, c)
 
     Asdp = preA[cone.f+cone.l+1:end,:]
     indices_sdp = Asdp.rowval
 
     aff = AffineSets(A, G, b, h, c)
     con = ConicSets(Tuple{Vector{Int},Vector{Int}}[(sortperm(indices_sdp), matindices(sympackeddim(length(indices_sdp))) )])
-    # @show aff
-
-
-    # @show size(A)
-    # @show size(preA)
-    # @show cone.sa
-
-    # Apython = readcsv("/Users/mariosouto/Dropbox/proxsdp/A.csv")
-    # bpython = readcsv("/Users/mariosouto/Dropbox/proxsdp/b.csv")
-    # @show norm(vec(Apython - A))
-    # @show norm(vec(bpython - b))
-    # writecsv("/Users/mariosouto/Dropbox/proxsdp/b_jl.csv", b)
-    # writecsv("/Users/mariosouto/Dropbox/proxsdp/c_jl.csv", c)
 
     dims = Dims(sympackeddim(size(A)[2]), size(A)[1], size(G)[1])
     sol = @timeit "Main" chambolle_pock(aff, con, dims)

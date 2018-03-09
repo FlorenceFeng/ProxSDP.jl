@@ -1,6 +1,7 @@
 module ProxSDP
 
 using MathOptInterface, TimerOutputs
+using LightGraphs
 
 include("mathoptinterface.jl")
 
@@ -97,6 +98,40 @@ function chambolle_pock(affine_sets::AffineSets, conic_sets::ConicSets, dims::Di
     adapt_level = 0.5       # Factor by which the stepsizes will be balanced 
     adapt_decay = 0.9       # Rate the adaptivity decreases over time
     adapt_threshold = 1.5   # Minimum value that trigger to recompute the stepsizes
+
+    # Build associated graph G(V, E)
+    # Build auxiliary dicts
+    k = 0
+    idx2tuple, tuple2idx = Dict(), Dict()
+    for j = 1:dims.n, i = j:dims.n
+        k += 1
+        idx = k
+        idx2tuple[idx] = (i, j)
+        tuple2idx[i, j] = idx
+    end
+
+    @show affine_sets.A
+    G = Graph(dims.n)
+    for i in 1:(dims.m + dims.p)
+        for j in 1:Int(dims.n * (dims.n + 1) / 2.0)
+            tup = idx2tuple[j]
+            if affine_sets.A[tup] != 0.0 || affine_sets.c[j] != 0.0
+                add_edge!(G, tup[1], tup[2])
+            end
+        end
+    end
+    @show G
+    @show cliques = maximal_cliques(G)
+    total_cliques = length(cliques)
+    H = Dict()  # Dictionary of selection matrices
+    for i in 1:total_cliques
+        E = zeros(length(cliques[i]), dims.n)
+        for ii in 1:length(cliques[i])
+            E[ii, cliques[i][ii]] = 1.0
+        end
+        H[i] = kron(E, E)
+    end
+    @show H
 
     # Fixed-point loop
     @timeit "CP loop" for k in 1:max_iter
