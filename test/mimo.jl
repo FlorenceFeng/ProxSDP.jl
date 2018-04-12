@@ -8,7 +8,7 @@ function mimo(solver)
     end
     
     # Instance size
-    m, n = 1000, 300
+    m, n = 5000, 100
     # Channel
     H = randn((m, n))
     # Gaussian noise
@@ -37,6 +37,7 @@ function mimo(solver)
     else
         XX = getvalue.(X)
     end
+    @show XX[1:n, end]
     x_hat = sign.(XX[1:n, end])
     println(x_hat-s)
     rank = length([eig for eig in eigfact(XX)[:values] if eig > 1e-4])

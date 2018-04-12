@@ -20,8 +20,8 @@ else
     # using Mosek
 end
 
-# include("mimo.jl")
-# mimo(ProxSDPSolverInstance())
+include("mimo.jl")
+mimo(ProxSDPSolverInstance())
 
 include("sdplib.jl")
 
@@ -53,19 +53,26 @@ include("sdplib.jl")
     # push!(paths, "data/arch4.dat-s")
     # push!(paths, "data/arch8.dat-s")
 
+    push!(paths, "data/theta2.dat-s")
+
     # Max-Cut
-    # push!(paths, "data/mcp250-1.dat-s")
-    # push!(paths, "data/mcp250-1.dat-s")
-    # push!(paths, "data/mcp250-2.dat-s")
-    # push!(paths, "data/mcp250-3.dat-s")
-    # push!(paths, "data/mcp250-4.dat-s")
-    # push!(paths, "data/mcp500-1.dat-s")
-    # push!(paths, "data/mcp500-2.dat-s")
-    # push!(paths, "data/mcp500-3.dat-s")
-    # push!(paths, "data/mcp500-4.dat-s")
-    # push!(paths, "data/maxG11.dat-s")
-    # push!(paths, "data/maxG51.dat-s")
-    # push!(paths, "data/maxG32.dat-s")
+    push!(paths, "data/mcp250-1.dat-s")
+    push!(paths, "data/mcp250-1.dat-s")
+    push!(paths, "data/mcp250-2.dat-s")
+    push!(paths, "data/mcp250-3.dat-s")
+    push!(paths, "data/mcp250-4.dat-s")
+    push!(paths, "data/mcp500-1.dat-s")
+    push!(paths, "data/mcp500-2.dat-s")
+    push!(paths, "data/mcp500-3.dat-s")
+    push!(paths, "data/mcp500-4.dat-s")
+    push!(paths, "data/maxG11.dat-s")
+    push!(paths, "data/maxG51.dat-s")
+    push!(paths, "data/maxG32.dat-s")
+
+    # push!(paths, "data/control4.dat-s")
+
+    # push!(paths, "data/truss1.dat-s")
+    # push!(paths, "data/truss5.dat-s")
 
     for path in paths
         @show path

@@ -23,8 +23,8 @@ function sdplib(solver, path)
     else
         c = [parse(Float64,string) for string in split(data[4, 1][2:end - 1], ",")]
     end
-    # n = abs(cum_blks[end])
-    n = length(c)
+    n = abs(cum_blks[end])
+    # n = length(c)
     # n = 335
     F = Dict(i => spzeros(n, n) for i = 0:m)
     for k=5:size(data)[1]
