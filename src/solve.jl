@@ -213,8 +213,8 @@ function MOI.optimize!(instance::ProxSDPSolverInstance)
     Asdp = preA[cone.f+cone.l+1:end,:]
     indices_sdp = Asdp.rowval
 
-    aff = AffineSets(A, G, b, h, c)
-    con = ConicSets(Tuple{Vector{Int},Vector{Int}}[(sortperm(indices_sdp), matindices(sympackeddim(length(indices_sdp))) )])
+    @show aff = AffineSets(A, G, b, h, c)
+    @show con = ConicSets(Tuple{Vector{Int},Vector{Int}}[(sortperm(indices_sdp), matindices(sympackeddim(indices_sdp)) )])
     # @show aff
 
 
@@ -237,7 +237,7 @@ function MOI.optimize!(instance::ProxSDPSolverInstance)
     instance.slack = sol.slack
     instance.objval = sol.objval + f.constant
 
-    if true
+    if false
         TimerOutputs.print_timer(TimerOutputs.DEFAULT_TIMER)
         print("\n")
         TimerOutputs.print_timer(TimerOutputs.flatten(TimerOutputs.DEFAULT_TIMER))
@@ -252,4 +252,5 @@ function MOI.optimize!(instance::ProxSDPSolverInstance)
 end
 
 matindices(n::Integer) = find(tril(trues(n,n)))
-sympackeddim(n) = div(isqrt(1+8n) - 1, 2)
+sympackeddim(n::Integer) = div(isqrt(1+8n) - 1, 2)
+sympackeddim(v::Vector) = sympackeddim(length(v))
